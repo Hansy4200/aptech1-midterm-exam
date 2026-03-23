@@ -11,6 +11,7 @@ function Signup() {
     year: '',
     bio: ''
   });
+  
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
