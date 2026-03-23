@@ -11,21 +11,10 @@ function Signup() {
   });
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // In a real app, submit to backend
-    console.log('Form submitted:', formData);
-    navigate('/success');
-  };
-
   return (
     <div className="page">
       <h1>Sign Up</h1>
-      <form onSubmit={handleSubmit} style={{ maxWidth: '400px' }}>
+      <form onSubmit={(e) => { e.preventDefault(); console.log('Form submitted:', formData); navigate('/success'); }} style={{ maxWidth: '400px' }}>
         <div style={{ marginBottom: '10px' }}>
           <label htmlFor="name">Name:</label>
           <input
@@ -33,7 +22,7 @@ function Signup() {
             id="name"
             name="name"
             value={formData.name}
-            onChange={handleChange}
+            onChange={(e) => setFormData({ ...formData, [e.target.name]: e.target.value })}
             required
             style={{ width: '100%', padding: '8px' }}
           />
@@ -45,7 +34,7 @@ function Signup() {
             id="email"
             name="email"
             value={formData.email}
-            onChange={handleChange}
+            onChange={(e) => setFormData({ ...formData, [e.target.name]: e.target.value })}
             required
             style={{ width: '100%', padding: '8px' }}
           />
@@ -57,7 +46,7 @@ function Signup() {
             id="major"
             name="major"
             value={formData.major}
-            onChange={handleChange}
+            onChange={(e) => setFormData({ ...formData, [e.target.name]: e.target.value })}
             required
             style={{ width: '100%', padding: '8px' }}
           />
@@ -68,7 +57,7 @@ function Signup() {
             id="year"
             name="year"
             value={formData.year}
-            onChange={handleChange}
+            onChange={(e) => setFormData({ ...formData, [e.target.name]: e.target.value })}
             required
             style={{ width: '100%', padding: '8px' }}
           >
@@ -85,7 +74,7 @@ function Signup() {
             id="bio"
             name="bio"
             value={formData.bio}
-            onChange={handleChange}
+            onChange={(e) => setFormData({ ...formData, [e.target.name]: e.target.value })}
             rows="4"
             style={{ width: '100%', padding: '8px' }}
           />
