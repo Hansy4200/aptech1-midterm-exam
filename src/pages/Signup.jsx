@@ -19,28 +19,61 @@ function Signup() {
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,16}$/;
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  const validate = () => {
-    const newErrors = {};
-    if (!nameRegex.test(formData.name)) {
-      newErrors.name = 'First name must contain only letters and at least 2 characters';
-    }
-    if (!usernameRegex.test(formData.username)) {
-      newErrors.username = 'Username can contain letters, numbers, ., _, - only';
-    }
-    if (!emailRegex.test(formData.email)) {
-      newErrors.email = 'Enter a valid email address';
-    }
-    if (!passwordRegex.test(formData.password)) {
-      newErrors.password = 'Password must be 8-16 chars with upper+lower+digit+special';
-    }
-    if (!formData.major.trim()) {
-      newErrors.major = 'Major is required';
-    }
-    if (!formData.year) {
-      newErrors.year = 'Year is required';
+  const validateField = (name, value) => {
+    const newErrors = { ...errors };
+    switch (name) {
+      case 'name':
+        if (!nameRegex.test(value)) {
+          newErrors.name = 'First name must contain only letters and at least 2 characters';
+        } else {
+          delete newErrors.name;
+        }
+        break;
+      case 'username':
+        if (!usernameRegex.test(value)) {
+          newErrors.username = 'Username can contain letters, numbers, ., _, - only';
+        } else {
+          delete newErrors.username;
+        }
+        break;
+      case 'email':
+        if (!emailRegex.test(value)) {
+          newErrors.email = 'Enter a valid email address';
+        } else {
+          delete newErrors.email;
+        }
+        break;
+      case 'password':
+        if (!passwordRegex.test(value)) {
+          newErrors.password = 'Password must be 8-16 chars with upper+lower+digit+special';
+        } else {
+          delete newErrors.password;
+        }
+        break;
+      case 'major':
+        if (!value.trim()) {
+          newErrors.major = 'Major is required';
+        } else {
+          delete newErrors.major;
+        }
+        break;
+      case 'year':
+        if (!value) {
+          newErrors.year = 'Year is required';
+        } else {
+          delete newErrors.year;
+        }
+        break;
+      default:
+        break;
     }
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    validateField(name, value);
   };
 
   return (
@@ -49,7 +82,7 @@ function Signup() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          if (validate()) {
+          if (Object.keys(errors).length === 0) {
             console.log('Form submitted:', formData);
             navigate('/success');
           }
@@ -63,9 +96,9 @@ function Signup() {
             id="name"
             name="name"
             value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            onChange={handleChange}
             required
-            style={{ width: '100%', padding: '8px' }}
+            style={{ width: '100%', padding: '8px', border: errors.name ? '2px solid red' : '1px solid #ccc' }}
           />
           {errors.name && <p style={{ color: 'red' }}>{errors.name}</p>}
         </div>
@@ -77,9 +110,9 @@ function Signup() {
             id="username"
             name="username"
             value={formData.username}
-            onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+            onChange={handleChange}
             required
-            style={{ width: '100%', padding: '8px' }}
+            style={{ width: '100%', padding: '8px', border: errors.username ? '2px solid red' : '1px solid #ccc' }}
           />
           {errors.username && <p style={{ color: 'red' }}>{errors.username}</p>}
         </div>
@@ -91,9 +124,9 @@ function Signup() {
             id="email"
             name="email"
             value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            onChange={handleChange}
             required
-            style={{ width: '100%', padding: '8px' }}
+            style={{ width: '100%', padding: '8px', border: errors.email ? '2px solid red' : '1px solid #ccc' }}
           />
           {errors.email && <p style={{ color: 'red' }}>{errors.email}</p>}
         </div>
@@ -105,9 +138,9 @@ function Signup() {
             id="password"
             name="password"
             value={formData.password}
-            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+            onChange={handleChange}
             required
-            style={{ width: '100%', padding: '8px' }}
+            style={{ width: '100%', padding: '8px', border: errors.password ? '2px solid red' : '1px solid #ccc' }}
           />
           {errors.password && <p style={{ color: 'red' }}>{errors.password}</p>}
         </div>
@@ -119,9 +152,9 @@ function Signup() {
             id="major"
             name="major"
             value={formData.major}
-            onChange={(e) => setFormData({ ...formData, major: e.target.value })}
+            onChange={handleChange}
             required
-            style={{ width: '100%', padding: '8px' }}
+            style={{ width: '100%', padding: '8px', border: errors.major ? '2px solid red' : '1px solid #ccc' }}
           />
           {errors.major && <p style={{ color: 'red' }}>{errors.major}</p>}
         </div>
@@ -132,9 +165,9 @@ function Signup() {
             id="year"
             name="year"
             value={formData.year}
-            onChange={(e) => setFormData({ ...formData, year: e.target.value })}
+            onChange={handleChange}
             required
-            style={{ width: '100%', padding: '8px' }}
+            style={{ width: '100%', padding: '8px', border: errors.year ? '2px solid red' : '1px solid #ccc' }}
           >
             <option value="">Select Year</option>
             <option value="Freshman">Freshman</option>
@@ -157,7 +190,18 @@ function Signup() {
           />
         </div>
 
-        <button type="submit" style={{ padding: '10px 20px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '5px' }}>
+        <button
+          type="submit"
+          disabled={Object.keys(errors).length > 0}
+          style={{
+            padding: '10px 20px',
+            backgroundColor: Object.keys(errors).length > 0 ? '#ccc' : '#007bff',
+            color: 'white',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: Object.keys(errors).length > 0 ? 'not-allowed' : 'pointer'
+          }}
+        >
           Sign Up
         </button>
       </form>
